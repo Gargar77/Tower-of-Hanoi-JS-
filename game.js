@@ -1,6 +1,8 @@
 class Game {
 
     constructor() {
+         // the disk will be saved in the tower in this format:
+            //  [[{disk:2}],[{disk:1},{disk:2}]]
         this.towers = [];
     }
 
@@ -19,7 +21,7 @@ class Game {
         this.printTowers();
         const reader = this.setUpInterface();
         console.log("startIndex");
-        reader.question("Where do you want to move the disk?",() => this.moveDisk());
+        reader.question("Where do you want to move the disk?",this.moveDisk)
     }
 
     setUpInterface() {
@@ -45,8 +47,7 @@ class Game {
         // the end tower idx must have either:
             // an empty pole OR
             // a disk that is LARGER than the current disk
-            // the disk will be saved in the tower in this format:
-            //  [[{disk:2}],[{disk:1},{disk:2}]]
+           
         let startTower = this.towers[startTowerIdx]
         let endTower = this.towers[endTowerIdx]
         
@@ -55,6 +56,8 @@ class Game {
             endTower[0]["disk"] < startTower[0]["disk"]) return false; 
         return true;
     }
+
+
 
 
 }
@@ -76,4 +79,6 @@ game = new Game();
 // console.log(game.isValidMove(0,1)); //=> false
 // console.log(game.isValidMove(1,2)); //=>true
 // console.log(game.isValidMove(1,3)); //=>true
+
+
 
