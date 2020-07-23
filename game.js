@@ -1,54 +1,48 @@
 class Game {
 
     constructor() {
-         // the disk will be saved in the tower in this format:
-            //  [[{disk:2}],[{disk:1},{disk:2}]]
-        this.towers = [];
-        this.originalStack = [];
+     
+        this.towers = [
+            [1,2,3],
+            [],
+            []
+        ];
+        this.originalStack = [
+            [1,2,3],
+            [],
+            []
+        ]
     }
 
-    run() {
-        //until all disks are in the last pole {
+    run(reader,completionCallback) {
 
-            // ask user("which disk to grab")
-                // grab disk from desired pole
-            // ask user ("what pole to place disk")
-                // place disk on pole IF APPLICABLE
-
-        // }
+        this.promptMove(reader,completionCallback,this.move);
     }
 
-    promptMove() {
-        this.printTowers();
-        const reader = this.setUpInterface();
-        console.log("startIndex");
-        reader.question("Where do you want to move the disk?",this.moveDisk)
-    }
+    promptMove(reader,completionCallback,moveCallback) {
+        this.print();
+        reader.question("choose a tower :\n>", (startTowerIdx)=> {
+            reader.question("Where do you want to move the disk?\n>", (endTowerIdx)=> {
 
-    setUpInterface() {
-        const readline = require('readline');
+                let that = this
+                let hasMoved = moveCallback(startTowerIdx,endTowerIdx,that);
+               
 
-        const reader = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout
+                if (!hasMoved) {
+                    throw new Error("Invalid Move!!");
+                } else if (that.isWon()) {
+                    console.log("YOU WIN!!");
+                    completionCallback();
+                } else {
+                    that.run(reader,completionCallback,moveCallback);
+                }
+            })
         });
-
-        return reader;
-    }
-
-    printTowers() {
-        console.log("here are the towers!");
-    }
-
-    moveDisk() {
-        console.log("moved to: endTowerIdx");
+        
     }
 
     isValidMove(startTowerIdx,endTowerIdx) {
-        // the end tower idx must have either:
-            // an empty pole OR
-            // a disk that is LARGER than the current disk
-           
+      
         let startTower = this.towers[startTowerIdx]
         let endTower = this.towers[endTowerIdx]
         
@@ -58,15 +52,12 @@ class Game {
         return true;
     }
 
-    move(startTowerIdx,endTowerIdx) {
-        // performs ONLY if isValidMove === true
-        // do the move!
+    move(startTowerIdx,endTowerIdx,that) {
+    
+        if(!that.isValidMove(startTowerIdx,endTowerIdx)) return false;
 
-
-        if(!this.isValidMove(startTowerIdx,endTowerIdx)) return false;
-
-        const diskToMove = this.towers[startTowerIdx].shift();
-        this.towers[endTowerIdx].unshift(diskToMove);
+        const diskToMove = that.towers[startTowerIdx].shift();
+        that.towers[endTowerIdx].unshift(diskToMove);
         return true;
     }
 
@@ -85,15 +76,12 @@ class Game {
 
             return fullStack === 1 ? true : false;
         };
-
-
-
-
-
 }
 
+module.exports = Game;
 
-game = new Game();
+
+// game = new Game();
 
 // game.promptMove();
 
@@ -103,6 +91,10 @@ game = new Game();
 //     [],
 //     [2]
 // ] 
+
+// game.run(()=> {
+//     console.log("YOU WIN!!");
+// });
 
 
 // =======testing:isValid()===========
