@@ -4,6 +4,7 @@ class Game {
          // the disk will be saved in the tower in this format:
             //  [[{disk:2}],[{disk:1},{disk:2}]]
         this.towers = [];
+        this.originalStack = [];
     }
 
     run() {
@@ -53,9 +54,38 @@ class Game {
         
         if( startTower[0] === undefined) return false;
         if( endTower[0] !== undefined && 
-            endTower[0]["disk"] < startTower[0]["disk"]) return false; 
+            endTower[0] < startTower[0]) return false; 
         return true;
     }
+
+    move(startTowerIdx,endTowerIdx) {
+        // performs ONLY if isValidMove === true
+        // do the move!
+
+
+        if(!this.isValidMove(startTowerIdx,endTowerIdx)) return false;
+
+        const diskToMove = this.towers[startTowerIdx].shift();
+        this.towers[endTowerIdx].unshift(diskToMove);
+        return true;
+    }
+
+    print() {
+        console.log(JSON.stringify(this.towers))
+    }
+
+    isWon() {
+        if (this.towers === this.originalStack) return false;
+        let fullStack = 0;
+        this.towers.forEach ( (tower)=> {
+            if(tower.length > 0) {
+                fullStack +=1 
+            }
+        })
+
+            return fullStack === 1 ? true : false;
+        };
+
 
 
 
@@ -68,17 +98,58 @@ game = new Game();
 // game.promptMove();
 
 // game.towers = [
-//     [{disk:2}],
-//     [{disk:1},{disk:2}],
+//     [2],
+//     [1,2],
 //     [],
-//     [{disk:2}]
+//     [2]
+// ] 
+
+
+// =======testing:isValid()===========
+//console.log(game.isValidMove(2,0)); //=> false
+//console.log(game.isValidMove(0,1)); //=> false
+//console.log(game.isValidMove(1,2)); //=>true
+//console.log(game.isValidMove(1,3)); //=>true
+
+
+// ==========Testing: move()==========
+// console.log(game.towers);
+// console.log(game.move(1,3));
+// console.log(game.towers);
+
+
+// console.log(game.towers);
+// console.log(game.move(0,1));
+// console.log(game.towers);
+
+// console.log(game.towers);
+// console.log(game.move(0,2));
+// console.log(game.towers);
+
+
+
+// =====Testing:print()===========
+
+// game.towers = [
+//     [2],
+//     [1,2],
+//     []
 // ]
 
+// game.print();
 
-// console.log(game.isValidMove(2,0)); //=> false
-// console.log(game.isValidMove(0,1)); //=> false
-// console.log(game.isValidMove(1,2)); //=>true
-// console.log(game.isValidMove(1,3)); //=>true
+// ====Testing:isWon========
 
+// game.originalStack = [
+//     [1,2,3],
+//     [],
+//     []
+// ]
 
+// game.towers = [
+//     [],
+//     [1,2,3],
+//     []
+// ]
 
+// console.log(game.isWon());
